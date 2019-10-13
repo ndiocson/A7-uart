@@ -4,7 +4,7 @@
 -- 
 -- Create Date: 10/11/2019 11:12:20 PM
 -- Design Name: UART Receiver
--- Module Name: UART_RX - Behavioral
+-- Module Name: UART_Rx - Behavioral
 -- Project Name: UART
 -- Target Devices: Arty A7-35T
 -- Tool Versions: 
@@ -22,21 +22,21 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
-entity UART_RX is
+entity UART_Rx is
     Generic (
             BAUD_RATE       : integer := 9600;
             BIT_FREQ_CNT    : integer := 1040;
             SAMPLE_FREQ_CNT : integer := 520;
-            N_BITS          : integer := 8
+            TRAN_BITS       : integer := 8
             );
     Port (
             reset           : in std_logic;
             input_stream    : in std_logic;
-            rx_bits         : out std_logic_vector(N_BITS - 1 downto 0)
+            rx_bits         : out std_logic_vector(TRAN_BITS - 1 downto 0)
             );
-end UART_RX;
+end entity UART_Rx;
 
-architecture Behavioral of UART_RX is
+architecture Behavioral of UART_Rx is
 
 -- Counter Component Declaration
 component Counter is
@@ -51,16 +51,14 @@ component Counter is
 end component Counter;
 
 -- CLK_FREQ:        Constant frequency of on-board clock (10 MHz for Arty A7-35T)
-constant CLK_FREQ   : positive := 1E7;
-
 -- clk:             Internal signal based on on-board clock used to drive counter
+constant CLK_FREQ   : positive := 1E7;
 signal clk          : std_logic := '0';
 
 -- state:           Enumerated type to define states of Receiver FSM
-type state is (idle, init_read, read_bits, stop_read, done_read);
-
 -- p_state:         Internal state signal used to represent the present state
 -- n_state:         Internal state signal used to represent the next state
+type state is (idle, init_read, read_bits, stop_read, done_read);
 signal p_state, n_state : state := idle;
 
 -- rx_init:         Internal signal used to indicate when the input_stream is ready
@@ -184,7 +182,7 @@ begin
     monitor_stop: process(p_state, bit_pos_sig) is
     begin
         if (p_state = read_bits) then
-            if (bit_pos_sig > N_BITS - 1) then
+            if (bit_pos_sig > TRAN_BITS - 1) then
                 rx_stop <= '1';
             else
                 rx_stop <= '0';
@@ -211,4 +209,4 @@ begin
         end if;
     end process sample_bits;
     
-end Behavioral;
+end architecture Behavioral;
