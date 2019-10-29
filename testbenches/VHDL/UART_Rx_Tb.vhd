@@ -30,12 +30,12 @@ architecture Test of UART_Rx_Tb is
 component UART_Rx is
     Generic (
             BAUD_RATE       : integer := 9600;
-            BIT_FREQ_CNT    : integer := 1040;
-            SAMPLE_FREQ_CNT : integer := 520;
+            BIT_CNT         : integer := 1040;
+            SAMPLE_CNT      : integer := 520;
             TRAN_BITS       : integer := 8
             );
     Port (
-            reset           : in std_logic;
+            clk, reset      : in std_logic;
             input_stream    : in std_logic;
             rx_bits         : out std_logic_vector(TRAN_BITS - 1 downto 0)
             );
@@ -59,8 +59,8 @@ begin
 
     -- Instantiates device under test
     DUT: entity work.UART_Rx(Behavioral)
-        Generic Map(BAUD_RATE => open, BIT_FREQ_CNT => open, SAMPLE_FREQ_CNT => open, TRAN_BITS => TRAN_BITS)
-        Port Map (reset => reset, input_stream => input_stream, rx_bits => rx_bits);
+        Generic Map(BAUD_RATE => open, BIT_CNT => open, SAMPLE_CNT => open, TRAN_BITS => TRAN_BITS)
+        Port Map (clk => clk, reset => reset, input_stream => input_stream, rx_bits => rx_bits);
 
     -- Drives input clk signal
     drive_clk: process is
@@ -74,8 +74,67 @@ begin
     -- Process to stimulate input signals of DUT
     stimulus: process is
     begin
+
+        -- Functionality Test
+        wait for 300 us;
+        input_stream <= '0';
+        wait for 208 us;
+        input_stream <= '1';
+        wait for 312 us;
+        input_stream <= '0';
+        wait for 208 us;
+        input_stream <= '1';
+        wait for 104 us;
+        input_stream <= '0';
+        wait for 104 us;
+        input_stream <= '1'; 
+        wait for 300 us;
+
+--        -- Invalid Input Stream Test
+--        wait for 300 us;
+--        input_stream <= '0';
+--        wait for 208 us;
+--        input_stream <= '1';
+--        wait for 312 us;
+--        input_stream <= '0';
+--        wait for 208 us;
+--        input_stream <= '1';
+--        wait for 104 us;
+--        input_stream <= '0';
+--        wait for 208 us;
         
-        wait;
+--        input_stream <= '1';
+--        wait for 300 us;
+--        input_stream <= '0';
+--        wait for 208 us;
+--        input_stream <= '1';
+--        wait for 312 us;
+--        input_stream <= '0';
+--        wait for 208 us;
+--        input_stream <= '1';
+--        wait for 104 us;
+--        input_stream <= '0';
+--        wait for 104 us;        
+--        input_stream <= '1';
+--        wait for 300 us;
+        
+--        -- Reset Test
+--        wait for 300 us;
+--        input_stream <= '0';
+--        wait for 208 us;
+--        input_stream <= '1';
+--        wait for 312 us;
+--        input_stream <= '0';
+--        wait for 208 us;
+--        input_stream <= '1';
+--        wait for 104 us;
+--        reset <= '1';
+--        wait for 50 us;
+--        reset <= '0';
+--        input_stream <= '0';
+--        wait for 104 us;
+--        input_stream <= '1'; 
+--        wait for 300 us;
     end process stimulus;
 
 end Test;
