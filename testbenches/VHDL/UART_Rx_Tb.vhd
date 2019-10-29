@@ -23,7 +23,7 @@ use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
 entity UART_Rx_Tb is
-end UART_Rx_Tb;
+end entity UART_Rx_Tb;
 
 architecture Test of UART_Rx_Tb is
 
@@ -137,4 +137,4 @@ begin
 --        wait for 300 us;
     end process stimulus;
 
-end Test;
+end architecture Test;

@@ -23,7 +23,7 @@ use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
 entity Counter_Tb is
-end Counter_Tb;
+end entity Counter_Tb;
 
 architecture Test of Counter_Tb is
 
@@ -67,7 +67,7 @@ begin
     -- Process to sitmulate input signals of DUT
     stimulus: process is
     begin
-        wait for 400 ms;
+        wait for 1040 us;
         reset <= '1';
         wait for 20 ms;
         reset <= '0';
