@@ -28,39 +28,64 @@ architecture Test of FIFO_Tb is
 
 component FIFO is
     Generic (
-            SIZE    : integer := 8 
+            DEPTH       : integer := 8;
+            DEFAULT_BIT : std_logic := '0'
             );
     Port ( 
-            reset   : in std_logic;
-            in_bit  : in std_logic;
-            out_bit : out std_logic
+            clear       : in std_logic;
+            write, read : in std_logic;
+            in_data     : in std_logic;
+            full, empty : out std_logic;
+            out_data    : out std_logic
             );
 end component FIFO;
 
 -- Input signals
-signal reset    : std_logic := '0';
-signal in_bit   : std_logic := '0';
+signal clear        : std_logic;
+signal write, read  : std_logic := '0';
+signal in_data      : std_logic := '1';
 
--- Output signal
-signal out_bit  : std_logic := '0';
+-- Output signals
+signal full, empty  : std_logic;
+signal out_data     : std_logic;
 
 begin
 
     -- Instatiates device under test
     DUT: FIFO
-        Generic Map (SIZE => open)
-        Port Map (reset => reset, in_bit => in_bit,out_bit => out_bit);
-
+        Generic Map (DEPTH => open, DEFAULT_BIT => open)
+        Port Map (clear => clear, write => write, read => read, in_data => in_data, full => full, empty => empty, out_data => out_data);
+               
+    -- Process to stimulate the in_data signal of DUT
     stimulus: process is
     begin
         wait for 10 ns;
-        in_bit <= '1';
+        in_data <= '0';
         wait for 10 ns;
-        in_bit <= '0';
-        wait for 20 ns;
-        in_bit <= '1';
-        wait for 30 ns;
-        in_bit <= '0';
+        in_data <= '1';
     end process stimulus;
+    
+    -- Process to control the write and read signals of DUT
+    wr_control: process is
+    begin
+        
+        for i in 0 to 7 loop
+            wait for 5 ns;
+            write <= '1';
+            wait for 5 ns;
+            write <= '0';
+        end loop;
+        
+        wait for 10 ns;
+        
+        for i in 0 to 7 loop
+            wait for 5 ns;
+            read <= '1';
+            wait for 5 ns;
+            read <= '0';
+        end loop;
+        
+        wait;
+    end process wr_control;
 
 end architecture Test;
