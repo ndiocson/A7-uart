@@ -64,19 +64,19 @@ signal p_state, n_state : state := idle;
 -- rx_init:         Internal signal used to indicate when the input_stream is ready
 -- rx_strt:         Internal signal used to indicate when to start reading transmission bits
 -- rx_stop:         Internal signal used to indicate when to stop reading transmission bits
--- rx_done:         Internal signal used to indicated when the input_stream is finished
+-- rx_done:         Internal signal used to indicate when the input_stream is finished
+-- rx_invl:         Internal signal used to indicate when the input_stream is invalid
 signal rx_init      : std_logic := '0';
 signal rx_strt      : std_logic := '0';
 signal rx_stop      : std_logic := '0';
 signal rx_done      : std_logic := '0';
+signal rx_invl      : std_logic := '0';
    
 -- full_bit:        Internal signal used to indicate when a new bit is to be read from the input_stream
 -- sample_bit:      Internal signal used to indicate when the current bit is to be sampled from the input_stream
--- reset_UART:      Internal signal used to reset the UART if the input_stream is invalid
 -- out_bits:        Internal signal used to hold the transmission bits while they are read
 signal full_bit     : std_logic := '0';
 signal sample_bit   : std_logic := '0';
-signal reset_UART   : std_logic := '0';
 signal out_bits     : std_logic_vector(TRAN_BITS - 1 downto 0) := (others => '0');
 
 -- bit_pos:         Shared variable used to track current positon of the transmission bit to sample
@@ -97,7 +97,7 @@ begin
         Port Map (clk => clk, reset => reset_count, max_reached => sample_bit);
         
     -- Process that manages the present and next states
-    state_machine: process(p_state, rx_init, rx_strt, rx_stop, rx_done) is
+    state_machine: process(p_state, rx_init, rx_strt, rx_stop, rx_done, rx_invl) is
     begin
         case p_state is
             when idle =>                    -- Start initial read when input_stream first goes to '0'
@@ -126,6 +126,8 @@ begin
                 if (rx_done = '1') then
                     rx_bits <= out_bits;
                     n_state <= idle;
+                elsif (rx_invl = '1') then
+                    n_state <= idle;
                 else
                     n_state <= p_state;                
                 end if;
@@ -133,9 +135,9 @@ begin
     end process state_machine;
     
     -- Process that handles the memory elements for the FSM
-    memory_elem: process(clk, reset, reset_UART) is
+    memory_elem: process(clk, reset) is
     begin
-        if (reset = '1' or reset_UART = '1') then
+        if (reset = '1') then
             p_state <= idle;
         elsif (rising_edge(clk)) then
             p_state <= n_state;
@@ -168,9 +170,9 @@ begin
         end if;
     end process init_read_proc;
 
-    -- If in the strt_bits state, sample bits until the out_bits vector is filled
+    -- If in the strt_read state, sample bits until the out_bits vector is filled
     -- If in the stop_read state, set rx_done to '1' when the transmission is finished    
-    read_proc: process(sample_bit, full_bit) is
+    read_bits_proc: process(sample_bit, full_bit) is
     begin
         if (p_state = strt_read) then
             if (sample_bit = '1' and full_bit = '0') then
@@ -181,11 +183,14 @@ begin
                 if (input_stream = '1') then
                     rx_done <= '1';
                 else
-                    reset_UART <= '1';
+                    rx_invl <= '1';
                 end if;
-            end if;            
+            end if;
+        else
+            rx_done <= '0';
+            rx_invl <= '0';          
         end if;
-    end process read_proc;
+    end process read_bits_proc;
     
     -- Increments the current bit position while sampling the input_stream
     increment_pos: process(sample_bit, full_bit) is
@@ -198,8 +203,8 @@ begin
         end if;
     end process increment_pos;     
 
-    -- Monitors bit_pos_sig and sets rx_stop to '1' when all of the transmission bits have been received
-    monitor_stop: process(p_state, bit_pos_sig) is
+    -- Sets rx_stop to '1' once all of the transmission bits have been sampled
+    stop_read_proc: process(p_state, bit_pos_sig) is
     begin
         if (p_state = strt_read) then
             if (bit_pos > TRAN_BITS - 1) then
@@ -208,6 +213,6 @@ begin
                 rx_stop <= '0';
             end if;
         end if;
-    end process monitor_stop;
+    end process stop_read_proc;
 
 end architecture Behavioral;
