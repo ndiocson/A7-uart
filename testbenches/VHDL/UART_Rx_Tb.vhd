@@ -58,7 +58,7 @@ signal rx_bits          : std_logic_vector(TRAN_BITS - 1 downto 0);
 begin
 
     -- Instantiates device under test
-    DUT: entity work.UART_Rx(Behavioral)
+    DUT: UART_Rx
         Generic Map(BAUD_RATE => open, BIT_CNT => open, SAMPLE_CNT => open, TRAN_BITS => TRAN_BITS)
         Port Map (clk => clk, reset => reset, input_stream => input_stream, rx_bits => rx_bits);
 
@@ -90,7 +90,7 @@ begin
         input_stream <= '1'; 
         wait for 300 us;
 
---        -- Invalid Input Stream Test
+        -- Invalid Input Stream Test
 --        wait for 300 us;
 --        input_stream <= '0';
 --        wait for 208 us;
@@ -118,7 +118,7 @@ begin
 --        input_stream <= '1';
 --        wait for 300 us;
         
---        -- Reset Test
+        -- Reset Test
 --        wait for 300 us;
 --        input_stream <= '0';
 --        wait for 208 us;

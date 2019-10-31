@@ -85,6 +85,28 @@ begin
             read <= '0';
         end loop;
         
+        wait for 50 ns;
+        
+        for i in 0 to 7 loop
+            wait for 5 ns;
+            write <= '1';
+            wait for 5 ns;
+            write <= '0';
+        end loop;
+        
+        wait for 5 ns;
+        clear <= '1';
+        wait for 5 ns;
+        clear <= '0';
+        wait for 5 ns;
+        
+        for i in 0 to 7 loop
+            wait for 5 ns;
+            read <= '1';
+            wait for 5 ns;
+            read <= '0';
+        end loop;
+        
         wait;
     end process wr_control;
 
