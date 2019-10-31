@@ -59,8 +59,6 @@ begin
     -- Internal signal fifo_empt drives output port empty
     empty <= fifo_empt;
     
-    -- TODO: implement clear
-    
     -- Tracks the current size of the buffer to control full and empty signals
     track_size: process(curr_size) is
     begin
@@ -76,26 +74,32 @@ begin
         end if;
     end process track_size;
     
+    -- Clears the buffer if the clear signal is asserted
     -- Writes data to the buffer if it is not full
     -- Reads data from the buffer if it is not empty
-    control_fifo: process(write, read) is
+    control_fifo: process(clear, write, read) is
     begin
-        if (write = '1' and read = '0') then
-            if (fifo_full /= '1') then
-                fifo_buf(curr_size) <= in_data;
-                curr_size <= curr_size + 1;
+        if (clear = '1') then
+            fifo_buf <= (others => DEFAULT_BIT);
+            curr_size <= 0;
+        else
+            if (write = '1' and read = '0') then
+                if (fifo_full /= '1') then
+                    fifo_buf(curr_size) <= in_data;
+                    curr_size <= curr_size + 1;
+                end if;
+            elsif (write = '0' and read = '1') then
+                if (fifo_empt /= '1') then
+                    out_data <= fifo_buf(0);
+                    for index in 0 to DEPTH - 2 loop
+                        fifo_buf(index) <= fifo_buf(index + 1);
+                    end loop;
+                    fifo_buf(DEPTH - 1) <= DEFAULT_BIT;
+                    curr_size <= curr_size - 1;
+                end if;
+            elsif (write = '1' and read = '1') then
+                out_data <= in_data;
             end if;
-        elsif (write = '0' and read = '1') then
-            if (fifo_empt /= '1') then
-                out_data <= fifo_buf(0);
-                for index in 0 to DEPTH - 2 loop
-                    fifo_buf(index) <= fifo_buf(index + 1);
-                end loop;
-                fifo_buf(DEPTH - 1) <= DEFAULT_BIT;
-                curr_size <= curr_size - 1;
-            end if;
-        elsif (write = '1' and read = '1') then
-            out_data <= in_data;
         end if;
     end process control_fifo;
 

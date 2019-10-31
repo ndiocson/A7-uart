@@ -86,12 +86,12 @@ signal bit_pos_sig      : integer := 0;
 begin
     
     -- Instantiates a Counter to drive the full_bit signal
-    bit_count: entity work.Counter(Behavioral)
+    bit_count: Counter
         Generic Map (CLK_FREQ => CLK_FREQ, MAX_COUNT => BIT_CNT + 1)
         Port Map (clk => clk, reset => reset_count, max_reached => full_bit);
     
     -- Instantiates a Counter to drive the sample_bit signal
-    sample_count: entity work.Counter(Behavioral)
+    sample_count: Counter
         Generic Map (CLK_FREQ => CLK_FREQ, MAX_COUNT => SAMPLE_CNT)
         Port Map (clk => clk, reset => reset_count, max_reached => sample_bit);
         

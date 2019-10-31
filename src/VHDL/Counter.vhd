@@ -40,6 +40,7 @@ shared variable count  : integer := 0;
 
 begin
     
+    -- Process to increment count variable until the MAX_COUNT has been reached
     count_proc: process(clk, reset) is
     begin
         if (rising_edge(clk)) then
