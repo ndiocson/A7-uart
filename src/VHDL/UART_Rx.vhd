@@ -5,7 +5,7 @@
 -- Create Date: 10/11/2019 11:12:20 PM
 -- Design Name: UART Receiver
 -- Module Name: UART_Rx - Behavioral
--- Project Name: N-Step Sequencer
+-- Project Name: UART
 -- Target Devices: Arty A7-35T
 -- Tool Versions: 
 -- Description: 

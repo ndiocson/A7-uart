@@ -43,11 +43,11 @@ begin
     -- Process to increment count variable until the MAX_COUNT has been reached
     count_proc: process(clk, reset) is
     begin
-        if (rising_edge(clk)) then
-            if (reset = '1') then
-                count := 0;
-                max_reached <= '0';
-            elsif (count >= MAX_COUNT) then
+        if (reset = '1') then
+            count := 0;
+            max_reached <= '0'; 
+        elsif (rising_edge(clk)) then
+            if (count >= MAX_COUNT) then
                 count := 0;
                 max_reached <= '1';
             else

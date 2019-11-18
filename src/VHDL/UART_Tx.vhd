@@ -5,7 +5,7 @@
 -- Create Date: 10/19/2019 11:55:14 AM
 -- Design Name: UART Transmitter
 -- Module Name: UART_Tx - Behavioral
--- Project Name: N-Step Sequencer
+-- Project Name: UART
 -- Target Devices: Arty A7-35T
 -- Tool Versions: 
 -- Description: 
