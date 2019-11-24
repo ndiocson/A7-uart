@@ -90,10 +90,9 @@ begin
             when idle =>
                 bit_pos <= 0;
                 reset_count <= '1';
+                n_state <= p_state;
                 if (falling_edge(input_stream)) then
                     n_state <= init_read;
-                else
-                    n_state <= p_state;
                 end if;
             
             -- Enters the 'strt_read' state once the start bit has been received
