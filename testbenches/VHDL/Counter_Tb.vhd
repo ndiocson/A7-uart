@@ -29,8 +29,8 @@ architecture Test of Counter_Tb is
 
 component Counter is
     Generic (
-            CLK_FREQ        : positive := 1E7;      -- on-board clock frequency (10 MHz)
-            MAX_COUNT       : positive := 520       -- maximum number of cycles to count to
+            CLK_FREQ        : positive := 1E8;      -- on-board clock frequency (10 MHz)
+            MAX_COUNT       : positive := 52        -- maximum number of cycles to count to
             );
     Port ( 
             clk, reset      : in std_logic;
@@ -38,8 +38,8 @@ component Counter is
             );
 end component Counter;
 
--- Simulatted Clock Period
-constant CLK_PERIOD     : time := 100 ns;
+-- Simulated Clock Period
+constant CLK_PERIOD     : time := 10 ns;
 
 -- Input Signals
 signal clk              : std_logic := '0';

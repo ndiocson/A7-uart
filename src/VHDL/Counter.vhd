@@ -20,12 +20,11 @@
 
 library IEEE;
 use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
 
 entity Counter is
     Generic (
-            CLK_FREQ        : positive := 1E7;      -- on-board clock frequency (10 MHz)
-            MAX_COUNT       : positive := 520       -- maximum number of cycles to count to
+            CLK_FREQ        : positive := 1E8;      -- on-board clock frequency (100 MHz)
+            MAX_COUNT       : positive := 5208      -- maximum number of cycles to count to
             );
     Port ( 
             clk, reset      : in std_logic;
@@ -35,23 +34,23 @@ end entity Counter;
 
 architecture Behavioral of Counter is
 
--- count:   Shared variable to keep track of current count
-shared variable count  : integer := 0;
+-- count:       Internal signal to keep track of current count
+signal count    : integer := 0;
 
 begin
     
     -- Process to increment count variable until the MAX_COUNT has been reached
     count_proc: process(clk, reset) is
     begin
-        if (rising_edge(clk)) then
-            if (reset = '1') then
-                count := 0;
-                max_reached <= '0';
-            elsif (count >= MAX_COUNT) then
-                count := 0;
+        if (reset = '1') then
+            count <= 0;
+            max_reached <= '0'; 
+        elsif (rising_edge(clk)) then
+            if (count >= MAX_COUNT) then
+                count <= 0;
                 max_reached <= '1';
             else
-                count := count + 1;
+                count <= count + 1;
                 max_reached <= '0';
             end if;
         end if;
