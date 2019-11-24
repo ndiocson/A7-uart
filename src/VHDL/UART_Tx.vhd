@@ -23,15 +23,14 @@ use IEEE.std_logic_1164.all;
 
 entity UART_Tx is
     Generic (
-            BAUD_RATE       : positive := 9600;
-            BIT_CNT         : positive := 651;
-            SAMPLE_CNT      : positive := 325;
-            TRAN_BITS       : positive := 8
+            CLK_FREQ        : positive := 1E8;      -- on-board clock frequency (default: 100 MHz)
+            BAUD_RATE       : positive := 9600;     -- rate of transmission (default: 9600 baud)
+            TRAN_BITS       : positive := 8         -- number of transmission bits (defualt: 8)
             );
     Port (
             clk, reset      : in std_logic;
             transmit        : in std_logic;
-            tx_bits         : in std_logic_vector(TRAN_BITS - 1 downto 0);
+            tx_data         : in std_logic_vector(TRAN_BITS - 1 downto 0);
             output_stream   : out std_logic
             );
 end entity UART_Tx;
@@ -42,7 +41,7 @@ architecture Behavioral of UART_Tx is
 component Counter is
     Generic (
             CLK_FREQ        : positive := 1E8;      -- on-board clock frequency (100 MHz)
-            MAX_COUNT       : positive := 5208      -- maximum number of cycles to count to
+            MAX_COUNT       : positive := 352       -- maximum number of cycles to count to
             );
     Port ( 
             clk, reset      : in std_logic;
@@ -50,8 +49,10 @@ component Counter is
             );
 end component Counter;
 
--- CLK_FREQ:        Constant frequency of on-board clock (100 MHz for Arty A7-35T)
-constant CLK_FREQ   : positive := 1E8;
+-- BIT_CNT:         Number of clock cycles to represent a bit
+-- SAMPLE_CNT       Number of clock cycles to sample a bit
+constant BIT_CNT    : positive := integer((CLK_FREQ / (16 * BAUD_RATE)) - 1);
+constant SAMPLE_CNT : positive := BIT_CNT / 2;
 
 -- state:           Enumerated type to define states of Receiver FSM
 -- p_state:         Internal state signal used to represent the present state
@@ -75,19 +76,19 @@ begin
 
     -- Instantiates a Counter to drive the write_bit signal
     bit_count: Counter
-        Generic Map (CLK_FREQ => CLK_FREQ, MAX_COUNT => BIT_CNT + 1)
+        Generic Map (CLK_FREQ => CLK_FREQ, MAX_COUNT => BIT_CNT)
         Port Map (clk => clk, reset => reset, max_reached => write_bit);
 
     -- Process to latch the data to be transmitted if the UART is ready
-    latch_data: process(new_write, tx_bits) is
+    latch_data: process(new_write, tx_data) is
     begin
         if (new_write = '1') then
-            tx_buffer <= tx_bits;
+            tx_buffer <= tx_data;
         end if;
     end process latch_data;
-
+    
     -- Process that transmits data bits to the output_stream depending on the state
-    state_machine: process(p_state, transmit, write_bit) is
+    state_machine: process(p_state, write_bit) is
     begin
         case p_state is
         
@@ -96,10 +97,9 @@ begin
                 new_write <= '1';
                 output_stream <= '1';
                 curr_pos <= tx_size'low;
+                n_state <= p_state;
                 if (transmit = '1') then
                     n_state <= send_start;
-                else
-                    n_state <= p_state;
                 end if;
             
             -- Sends the start '0' bit to the output_stream
@@ -135,12 +135,15 @@ begin
     end process state_machine;
     
     -- Process that handles the memory elements for the FSM
-    memory_elem: process(clk, reset) is
+    memory_elem: process(clk, reset, transmit) is
     begin
         if (reset = '1') then
             p_state <= idle;
         elsif (rising_edge(clk)) then
             p_state <= n_state;
+        end if;
+        if (rising_edge(transmit)) then
+            p_state <= send_start;
         end if;
     end process memory_elem;
     
