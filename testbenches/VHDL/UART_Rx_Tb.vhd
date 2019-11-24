@@ -29,10 +29,10 @@ architecture Test of UART_Rx_Tb is
 
 component UART_Rx is
     Generic (
-            BAUD_RATE       : integer := 9600;
-            BIT_CNT         : integer := 1040;
-            SAMPLE_CNT      : integer := 520;
-            TRAN_BITS       : integer := 8
+            BAUD_RATE       : positive := 9600;
+            BIT_CNT         : positive := 10416;
+            SAMPLE_CNT      : positive := 5208;
+            TRAN_BITS       : positive := 8
             );
     Port (
             clk, reset      : in std_logic;
@@ -41,10 +41,10 @@ component UART_Rx is
             );
 end component UART_Rx;
 
--- CLK_PERIOD:          Simulatted Clock Period
+-- CLK_PERIOD:          Simulated Clock Period
 -- TRAN_BITS:           Number of transmission bits
-constant CLK_PERIOD     : time := 100 ns;
-constant TRAN_BITS      : integer := 8;
+constant CLK_PERIOD     : time := 10 ns;
+constant TRAN_BITS      : positive := 8;
 
 -- Input Signals
 signal clk              : std_logic := '0';
@@ -69,6 +69,16 @@ begin
         clk <= '0';
         wait for CLK_PERIOD / 2;
     end process drive_clk;
+    
+    -- Process to stimulate reset signal
+    reset_stim: process is
+    begin
+        wait for 2500 us;
+        reset <= '1';
+        wait for 5 us;
+        reset <= '0';
+        wait;
+    end process reset_stim;
 
     -- Process to stimulate input signals of DUT
     stimulus: process is

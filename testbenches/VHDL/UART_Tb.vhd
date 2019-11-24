@@ -28,10 +28,10 @@ architecture Test of UART_Tb is
 
 component UART_Rx is
     Generic (
-            BAUD_RATE       : integer := 9600;
-            BIT_CNT         : integer := 1040;
-            SAMPLE_CNT      : integer := 520;
-            TRAN_BITS       : integer := 8
+            BAUD_RATE       : positive := 9600;
+            BIT_CNT         : positive := 10416;
+            SAMPLE_CNT      : positive := 5208;
+            TRAN_BITS       : positive := 8
             );
     Port (
             clk, reset      : in std_logic;
@@ -42,10 +42,10 @@ end component UART_Rx;
 
 component UART_Tx is
     Generic (
-            BAUD_RATE       : integer := 9600;
-            BIT_CNT         : integer := 1040;
-            SAMPLE_CNT      : integer := 520;
-            TRAN_BITS       : integer := 8
+            BAUD_RATE       : positive := 9600;
+            BIT_CNT         : positive := 10416;
+            SAMPLE_CNT      : positive := 5208;
+            TRAN_BITS       : positive := 8
             );
     Port (
             clk, reset      : in std_logic;
@@ -55,16 +55,16 @@ component UART_Tx is
             );
 end component UART_Tx;
 
--- CLK_PERIOD:          Simulatted Clock Period
+-- CLK_PERIOD:          Simulated Clock Period
 -- BAUD_RATE:           9600 bits per second
 -- BIT_CNT:             Number of clock cycles to represent a bit
 -- SAMPLE_CNT           Number of clock cycles to sample a bit
 -- TRAN_BITS:           Number of transmission bits
-constant CLK_PERIOD     : time := 100 ns;
-constant BAUD_RATE      : integer := 9600;
-constant BIT_CNT        : integer := 1040;
-constant SAMPLE_CNT     : integer := 520;
-constant TRAN_BITS      : integer := 32;
+constant CLK_PERIOD     : time := 10 ns;
+constant BAUD_RATE      : positive := 9600;
+constant BIT_CNT        : positive := 10416;
+constant SAMPLE_CNT     : positive := 5208;
+constant TRAN_BITS      : positive := 32;
 
 -- data_stream:         Signal to be transmitted to and received from by both DUTs
 signal data_stream      : std_logic;
@@ -99,27 +99,38 @@ begin
         wait for CLK_PERIOD / 2;
     end process drive_clk;
     
+    -- Process to stimulate reset signal
+    reset_stim: process is
+    begin
+        wait for 9 ms;
+        reset <= '1';
+        wait for 5 us;
+        reset <= '0';
+        wait;
+    end process reset_stim;
+    
     -- Process to stimulate input signals of both DUTss
     stimulus: process is
     begin
         wait for 100 us;
         tx_bits <= "01010101010101010101010101010101";
+        wait for 3000 us;
         transmit <= '1';
-        wait for 50 us;
+        wait for 5 us;
         transmit <= '0';
         
         wait for 1000 us;
         tx_bits <= "00000000000000000000000000000000";
         wait for 3000 us;
         transmit <= '1';
-        wait for 50 us;
+        wait for 5 us;
         transmit <= '0';
         
         wait for 1000 us;
         tx_bits <= "11111111111111111111111111111111";
         wait for 3000 us;
         transmit <= '1';
-        wait for 50 us;
+        wait for 5 us;
         transmit <= '0';
         wait;
     end process stimulus;

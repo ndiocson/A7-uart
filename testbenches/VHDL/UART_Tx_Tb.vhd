@@ -28,10 +28,10 @@ architecture Test of UART_Tx_Tb is
 
 component UART_Tx is
     Generic (
-            BAUD_RATE       : integer := 9600;
-            BIT_CNT         : integer := 1040;
-            SAMPLE_CNT      : integer := 520;
-            TRAN_BITS       : integer := 8
+            BAUD_RATE       : positive := 9600;
+            BIT_CNT         : positive := 10416;
+            SAMPLE_CNT      : positive := 5208;
+            TRAN_BITS       : positive := 8
             );
     Port (
             clk, reset      : in std_logic;
@@ -41,11 +41,10 @@ component UART_Tx is
             );
 end component UART_Tx;
 
--- Simulatted Clock Period
-constant CLK_PERIOD     : time := 100 ns;
-
--- Number of transmission bits
-constant TRAN_BITS      : integer := 8;
+-- CLK_PERIOD:          Simulated Clock Period
+-- TRAN_BITS:           Number of transmission bits
+constant CLK_PERIOD     : time := 10 ns;
+constant TRAN_BITS      : positive := 8;
 
 -- Input Signals
 signal clk              : std_logic := '0';
@@ -84,7 +83,7 @@ begin
         
         wait for 1000 us;
 
-        tx_bits <= "11111111";
+        tx_bits <= "10101010";
         wait for 50 us;
         transmit <= '1';
         wait for 25 us;
@@ -93,7 +92,7 @@ begin
         -- Reset Test
         wait for 500 us;
         reset <= '1';
-        wait for 50 us;
+        wait for 25 us;
         reset <= '0';
         wait for 450 us;
         
