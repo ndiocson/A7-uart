@@ -43,11 +43,19 @@ begin
     count_proc: process(clk, reset) is
     begin
         if (reset = '1') then
+<<<<<<< HEAD
             count <= 0;
             max_reached <= '0'; 
         elsif (rising_edge(clk)) then
             if (count >= MAX_COUNT) then
                 count <= 0;
+=======
+            count := 0;
+            max_reached <= '0'; 
+        elsif (rising_edge(clk)) then
+            if (count >= MAX_COUNT) then
+                count := 0;
+>>>>>>> 559e02050e337a0eeecea6f323add7aa2f4d0cd3
                 max_reached <= '1';
             else
                 count <= count + 1;
