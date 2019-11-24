@@ -24,8 +24,8 @@ use IEEE.std_logic_1164.all;
 entity UART_Rx is
     Generic (
             BAUD_RATE       : positive := 9600;
-            BIT_CNT         : positive := 10416;
-            SAMPLE_CNT      : positive := 5208;
+            BIT_CNT         : positive := 651;
+            SAMPLE_CNT      : positive := 325;
             TRAN_BITS       : positive := 8
             );
     Port (
@@ -73,7 +73,7 @@ begin
     
     -- Instantiates a Counter to drive the full_bit signal
     bit_count: Counter
-        Generic Map (CLK_FREQ => CLK_FREQ, MAX_COUNT => BIT_CNT + 1)
+        Generic Map (CLK_FREQ => CLK_FREQ, MAX_COUNT => BIT_CNT)
         Port Map (clk => clk, reset => reset_count, max_reached => full_bit);
     
     -- Instantiates a Counter to drive the sample_bit signal

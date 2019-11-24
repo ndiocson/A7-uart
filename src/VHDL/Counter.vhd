@@ -24,7 +24,7 @@ use IEEE.std_logic_1164.all;
 entity Counter is
     Generic (
             CLK_FREQ        : positive := 1E8;      -- on-board clock frequency (100 MHz)
-            MAX_COUNT       : positive := 5208      -- maximum number of cycles to count to
+            MAX_COUNT       : positive := 352       -- maximum number of cycles to count to
             );
     Port ( 
             clk, reset      : in std_logic;

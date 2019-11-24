@@ -24,8 +24,8 @@ use IEEE.std_logic_1164.all;
 entity UART_Tx is
     Generic (
             BAUD_RATE       : positive := 9600;
-            BIT_CNT         : positive := 10416;
-            SAMPLE_CNT      : positive := 5208;
+            BIT_CNT         : positive := 651;
+            SAMPLE_CNT      : positive := 325;
             TRAN_BITS       : positive := 8
             );
     Port (
