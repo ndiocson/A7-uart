@@ -40,9 +40,11 @@ component UART_Rx is
 end component UART_Rx;
 
 -- CLK_PERIOD:          Simulated Clock Period
+-- CLK_FREQ:            Clock frequency
 -- BAUD_RATE:           9600 bits per second
 -- TRAN_BITS:           Number of transmission bits
 constant CLK_PERIOD     : time := 10 ns;
+constant CLK_FREQ       : positive := 1E8;
 constant BAUD_RATE      : positive := 9600;
 constant TRAN_BITS      : positive := 32;
 
@@ -58,7 +60,7 @@ begin
 
     -- Instantiates device under test
     DUT: UART_Rx
-        Generic Map(CLK_FREQ => open, BAUD_RATE => BAUD_RATE, TRAN_BITS => TRAN_BITS)
+        Generic Map(CLK_FREQ => CLK_FREQ, BAUD_RATE => BAUD_RATE, TRAN_BITS => TRAN_BITS)
         Port Map (clk => clk, reset => reset, input_stream => input_stream, rx_data => rx_data);
 
     -- Drives input clk signal
@@ -100,32 +102,32 @@ begin
         wait for 300 us;
 
         -- Invalid Input Stream Test
---        wait for 300 us;
---        input_stream <= '0';
---        wait for 208 us;
---        input_stream <= '1';
---        wait for 312 us;
---        input_stream <= '0';
---        wait for 208 us;
---        input_stream <= '1';
---        wait for 104 us;
---        input_stream <= '0';
---        wait for 208 us;
+        wait for 300 us;
+        input_stream <= '0';
+        wait for 208 us;
+        input_stream <= '1';
+        wait for 312 us;
+        input_stream <= '0';
+        wait for 208 us;
+        input_stream <= '1';
+        wait for 104 us;
+        input_stream <= '0';
+        wait for 208 us;
         
---        input_stream <= '1';
---        wait for 300 us;
---        input_stream <= '0';
---        wait for 208 us;
---        input_stream <= '1';
---        wait for 312 us;
---        input_stream <= '0';
---        wait for 208 us;
---        input_stream <= '1';
---        wait for 104 us;
---        input_stream <= '0';
---        wait for 104 us;        
---        input_stream <= '1';
---        wait for 300 us;
+        input_stream <= '1';
+        wait for 300 us;
+        input_stream <= '0';
+        wait for 208 us;
+        input_stream <= '1';
+        wait for 312 us;
+        input_stream <= '0';
+        wait for 208 us;
+        input_stream <= '1';
+        wait for 104 us;
+        input_stream <= '0';
+        wait for 104 us;        
+        input_stream <= '1';
+        wait for 300 us;
     end process stimulus;
 
 end architecture Test;

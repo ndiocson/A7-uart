@@ -28,8 +28,8 @@ architecture Test of Counter_Tb is
 
 component Counter is
     Generic (
-            CLK_FREQ        : positive := 1E8;      -- on-board clock frequency (100 MHz)
-            MAX_COUNT       : positive := 352       -- maximum number of cycles to count to
+            CLK_FREQ        : positive := 1E8;      -- on-board clock frequency (default: 100 MHz)
+            MAX_COUNT       : positive := 100       -- maximum number of cycles to count to (default: 100)
             );
     Port ( 
             clk, reset      : in std_logic;
@@ -37,8 +37,12 @@ component Counter is
             );
 end component Counter;
 
--- CLK_PERIOD:          Simulated Clock Period
+-- CLK_PERIOD:          Simulated clock period
+-- CLK_FREQ:            Clock frequency
+-- MAX_COUNT:           Number of cycles to count
 constant CLK_PERIOD     : time := 10 ns;
+constant CLK_FREQ       : positive := 1E8;
+constant MAX_COUNT      : positive := 100;
 
 -- Input Signals
 signal clk              : std_logic := '0';
@@ -50,8 +54,8 @@ signal max_reached      : std_logic := '0';
 begin
     
     -- Instatiates device under test
-    DUT: Counter
-        Generic Map (CLK_FREQ => open, MAX_COUNT => open)
+    DUT: entity work.Counter(Behavioral)
+        Generic Map (CLK_FREQ => CLK_FREQ, MAX_COUNT => MAX_COUNT)
         Port Map (clk => clk, reset => reset, max_reached => max_reached);
 
     -- Drives input clk signal
@@ -66,9 +70,9 @@ begin
     -- Process to sitmulate input signals of DUT
     stimulus: process is
     begin
-        wait for 1040 us;
+        wait for 1000 us;
         reset <= '1';
-        wait for 20 ms;
+        wait for 20 us;
         reset <= '0';
         wait;
     end process stimulus;

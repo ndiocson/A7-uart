@@ -54,9 +54,11 @@ component UART_Tx is
 end component UART_Tx;
 
 -- CLK_PERIOD:          Simulated Clock Period
+-- CLK_FREQ:            Clock frequency
 -- BAUD_RATE:           9600 bits per second
 -- TRAN_BITS:           Number of transmission bits
 constant CLK_PERIOD     : time := 10 ns;
+constant CLK_FREQ       : positive := 1E8;
 constant BAUD_RATE      : positive := 9600;
 constant TRAN_BITS      : positive := 32;
 
@@ -76,12 +78,12 @@ begin
     
     -- Instantiates receiver device under test
     DUT_Rx: UART_Rx
-        Generic Map(CLK_FREQ => open, BAUD_RATE => BAUD_RATE, TRAN_BITS => TRAN_BITS)
+        Generic Map(CLK_FREQ => CLK_FREQ, BAUD_RATE => BAUD_RATE, TRAN_BITS => TRAN_BITS)
         Port Map (clk => clk, reset => reset, input_stream => data_stream, rx_data => rx_data);
 
     -- Instantiates transmitter device under test
     DUT_Tx: UART_Tx
-        Generic Map(CLK_FREQ => open, BAUD_RATE => BAUD_RATE, TRAN_BITS => TRAN_BITS)
+        Generic Map(CLK_FREQ => CLK_FREQ, BAUD_RATE => BAUD_RATE, TRAN_BITS => TRAN_BITS)
         Port Map(clk => clk, reset => reset, transmit => transmit, tx_data => tx_data, output_stream => data_stream);
 
     -- Drives input clk signal
