@@ -2,11 +2,11 @@
 
 ### UART Overview
 
-UART stands for Universal Asynchronous Receiver/Transmitter and is used to transmit and receive serial data. The Arty A7 development board includes a shared USB JTAG/UART port to communicate with the connected PC. The entire UART project consists of two major modules: the receiver and transmitter. 
+UART stands for Universal Asynchronous Receiver/Transmitter and is used to transmit and receive data serially. The Arty A7 development board includes a shared USB JTAG/UART port to communicate with the connected PC. The entire UART project consists of two major modules: the receiver and transmitter. 
 
 ![UART Simulation between UART_Rx and UART_Tx for 9600 baud](https://github.com/ndiocson/fpga-uart/blob/master/pictures/UART_Simulation_1.JPG)
 
-The default baud rate assumed for this UART implementation is 9600 baud, allowing for approximately ~104 μs to represent a full bit and ~52 μs to sample a bit.
+The default baud rate assumed for this UART implementation is 9600 baud, but can be modified.
 
 ### UART Receiver
 
